@@ -1,0 +1,34 @@
+- name: INFRASTRUCTURE RDS | Create Instance RDS
+  rds:
+    command: create
+    instance_name: "{{ project }}-{{ rds_env }}-database-rds-{{ item }}"
+    wait: yes
+    wait_timeout: 3600
+    db_engine: "{{ rds_database_engine }}"
+    db_name: "{{ rds_database_name }}"
+    engine_version: "{{ rds_database_version }}"
+    size: "{{ rds_database_size }}"
+    instance_type: "{{ database_instance_type }}"
+    username: "{{ mysql.root_username }}"
+    password: "{{ mysql.root_password }}"
+    multi_zone: "{{ rds_database_multi_zone }}"
+    maint_window: "{{ rds_database_maint_window }}"
+    parameter_group: "{{ rds_database_parameter_group }}"
+    option_group: "{{ rds_database_option_group }}"
+    port: "{{ rds_database_port }}"
+    publicly_accessible: "{{ rds_database_publicly_accessible }}"
+    region: "{{ rds_database_region }}"
+    upgrade: "{{ rds_database_upgrade }}"
+    subnet: "{{ project }}_{{ rds_env }}_rds_vpc_subnet"
+    iops: "{{ rds_database_disk_iops }}"
+    vpc_security_groups: "{{ security_group.group_id }}"
+    backup_retention: "{{ rds_database_backup_retention }}"
+    backup_window: "{{ rds_database_backup_window }}"
+    tags:
+      Name: "{{ project }}_{{ rds_env }}_database_{{ item }}"
+      billing: "{{ billing_tag_value }}"
+      env: "{{ project }}_{{ rds_env }}"
+      role: "database"
+      type: "{{ type_tag_value }}"
+  register: rds_create_gathering
+  with_sequence: start="{{ rds_database_count_start }}" end="{{ rds_database_count_end }}"
